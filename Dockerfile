@@ -1,5 +1,5 @@
 # https://github.com/turlucode/ros-docker-gui/tree/master/nvidia/noetic/cuda11.1
-FROM nvidia/cuda:10.2-base-ubuntu18.04
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
 MAINTAINER Athanasios Tasoglou <athanasios@tasoglou.net>
 LABEL Description="ROS-Noetic-Desktop with CUDA 10.2 support (Ubuntu 18.04)" Vendor="TurluCode" Version="1.0"
 
@@ -47,6 +47,19 @@ RUN /usr/bin/yes | pip3 install --upgrade virtualenv
 RUN /usr/bin/yes | pip3 install --upgrade paramiko
 RUN /usr/bin/yes | pip3 install --ignore-installed --upgrade numpy protobuf
 
+RUN apt-get update \
+  && apt-get install -y -qq --no-install-recommends \
+    libglvnd0 \
+    libgl1 \
+    libglx0 \
+    libegl1 \
+    libxext6 \
+    libx11-6 \
+  && rm -rf /var/lib/apt/lists/*
+
+# RUN apt-get install libxext-dev libX11-dev x11proto-gl-dev
+# RUN apt-get install libxext-dev libx11-dev x11proto-gl-dev
+
 # Locale
 RUN locale-gen en_US.UTF-8  
 ENV LANG en_US.UTF-8  
@@ -82,7 +95,7 @@ RUN rosdep init
 RUN locale-gen en_US.UTF-8
 RUN useradd -m -d /home/ubuntu ubuntu -p `perl -e 'print crypt("ubuntu", "salt"),"\n"'` && \
     echo "ubuntu ALL=(ALL) ALL" >> /etc/sudoers
-USER ubuntu
+# USER ubuntu
 WORKDIR /home/ubuntu
 ENV HOME=/home/ubuntu \
     CATKIN_SHELL=bash
@@ -95,7 +108,7 @@ RUN echo 'source /opt/ros/melodic/setup.bash' >> ~/.bashrc \
     && echo 'source ~/catkin_ws/devel/setup.bash' >> ~/.bashrc
 
 RUN cd ~/
-RUN mkdir -p ~/Working_Dir
+RUN mkdir -p ~/projects/
 
 # Launch terminator
 CMD ["terminator"]
