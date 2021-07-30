@@ -3,10 +3,11 @@ docker build -t ros_nvidia_image .
 
 connect docker to outside
 
-docker run -it --name gazebo_env --gpus=all --shm-size 8G -p 8888:8888 -p 5000:5000 --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" ros_nvidia_image /bin/bash
+docker run -it --name gazebo_env --gpus=all --shm-size 8G -p 8888:8888 -p 5000:5000 -p 80:80 -p 11371:11371 -p 22:22 --env="DISPLAY" --env="QT_X11_NO_MITSHM=1" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" ros_nvidia_image /bin/bash
 
 docker exec -it --user root gazebo_env /bin/bash
 
+export ROS_MASTER_URI=http://localhost:11371/
 Inside docker 
 
 git clone https://github.com/opencv/opencv.git && git clone https://github.com/opencv/opencv_contrib.git && cd opencv && mkdir build && cd build
@@ -42,13 +43,12 @@ echo $BASE_DEPENDENCIES $GAZEBO_BASE_DEPENDENCIES | tr -d '\\' | xargs sudo apt-
 # Main repository
 sudo apt-add-repository ppa:dartsim
 sudo apt-get update
-sudo apt-get install libdart6-dev
+sudo apt-get -y install libdart6-dev
 
 # Optional DART utilities
-sudo apt-get install libdart6-utils-urdf-dev
+sudo apt-get -y install libdart6-utils-urdf-dev
 
-sudo apt-get install xsltproc
-
+sudo apt-get -y install xsltproc
 
  Done. The new package has been installed and saved to
 
@@ -68,6 +68,8 @@ docker start $containerId
 docker exec -it --user root $containerId /bin/bash
 
 in side docker: run progame with cv2::imshow(someimg)
+
+curl -sSL http://get.gazebosim.org | sh
 
 # revoke 
 xhost -local:root
