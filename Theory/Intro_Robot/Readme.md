@@ -1,0 +1,1 @@
+http://mathdep.ifmo.ru/wp-content/uploads/2018/10/John-J.Craig-Introduction-to-Robotics-Mechanics-and-Control-3rd-edition-Pearson-Education-Inc.-2005.pdf
